@@ -42,7 +42,7 @@ class Ball:
             (max_radius - previous_length) / (length - previous_length)
         )
         self.extend_path(normal)
-        self.previous_position = (self.previous_position - normal).reflect(normal) + normal
+        self.previous_position.update(normal)
         self.position = (self.position - normal).reflect(normal) + normal
         self.velocity.reflect_ip(normal)
         self.velocity *= bounce_factor
