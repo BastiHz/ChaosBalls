@@ -53,7 +53,6 @@ class Simulation:
                         gravity_half,
                         self.bounce_factor
                     )
-                    # ball.extend_path(self.window_center)
 
             self.window.fill(self.background_color)
             pygame.gfxdraw.aacircle(
