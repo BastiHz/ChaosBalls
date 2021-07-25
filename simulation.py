@@ -72,29 +72,12 @@ class Simulation:
                     1
                 )
             for ball in self.balls:
-                x, y = ball.position + self.window_center
-                x = int(x)
-                y = int(y)
                 pygame.draw.circle(
                     self.window,
                     ball.color,
-                    (x, y),
+                    ball.position + self.window_center,
                     ball.radius
                 )
-                # pygame.gfxdraw.aacircle(
-                #     self.window,
-                #     x,
-                #     y,
-                #     ball.radius,
-                #     ball.color
-                # )
-                # pygame.gfxdraw.filled_circle(
-                #     self.window,
-                #     x,
-                #     y,
-                #     ball.radius,
-                #     ball.color
-                # )
             pygame.display.flip()
 
 
