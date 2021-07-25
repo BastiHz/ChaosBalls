@@ -4,6 +4,7 @@ import pygame
 class Ball:
     def __init__(self,
                  window_center,
+                 circle_radius,
                  color,
                  radius,
                  position_x=0,
@@ -11,6 +12,7 @@ class Ball:
                  velocity_x=0,
                  velocity_y=0):
         self.window_center = window_center
+        self.max_length = circle_radius - radius
         self.color = color
         self.radius = radius
         # Position is relative to the top left window corner. Not the position inside the window!
@@ -24,28 +26,27 @@ class Ball:
         self.extend_path(self.previous_position)
         self.extend_path(self.position)
 
-    def update(self, dt, circle_radius, acceleration, acceleration_half, bounce_factor):
+    def update(self, dt, acceleration, acceleration_half, bounce_factor):
         self.previous_position.update(self.position)
         self.velocity += acceleration
         self.position += (self.velocity - acceleration_half) * dt
-        max_radius = circle_radius - self.radius
-        while self.position.length() >= max_radius:
-            self.bounce(max_radius, bounce_factor)
-        self.extend_path(self.position)
+        current_length = self.position.length()
+        if current_length >= self.max_length:  # bounce
+            previous_length = self.previous_position.length()
+            ratio = (self.max_length - previous_length) / (current_length - previous_length)
+            # collision point = normal vector for reflection
+            normal = self.previous_position.lerp(self.position, ratio)
+            self.extend_path(normal)
+            self.previous_position.update(normal)
+            self.position = (self.position - normal).reflect(normal) + normal
+            # Try to correct the acceleraton. The ball has been reflected, which means that
+            # for part of the last frame the acceleration downwards grew too high.
+            self.velocity -= acceleration * (1 - ratio)
+            self.velocity *= bounce_factor
+            self.velocity.reflect_ip(normal)
 
-    def bounce(self, max_radius, bounce_factor):
-        previous_length = self.previous_position.length()
-        length = self.position.length()
-        # collision point = normal vector for reflection
-        normal = self.previous_position.lerp(
-            self.position,
-            (max_radius - previous_length) / (length - previous_length)
-        )
-        self.extend_path(normal)
-        self.previous_position.update(normal)
-        self.position = (self.position - normal).reflect(normal) + normal
-        self.velocity.reflect_ip(normal)
-        self.velocity *= bounce_factor
-
-    def extend_path(self, pos):
+    def extend_path(self, pos=None):
+        # Convert world position to position in screen space for the path.
+        if pos is None:
+            pos = self.position
         self.path.append(pos + self.window_center)
