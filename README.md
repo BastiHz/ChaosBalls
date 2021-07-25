@@ -4,6 +4,6 @@ Inspired by [this numberphile video](https://www.youtube.com/watch?v=6z4qRhpBIyA
 
 The balls start at almost the same position but after just a few bounces their paths differ wildly.
 
-Requires Pygame. Run simulation.py to start. Press spacebar to pause or unpause.
+Requires Pygame. Run simulation.py to start. Press spacebar to pause or unpause. Press R to reset the balls. 
 
 ![example picture](example.png)
